@@ -2,10 +2,10 @@ pipeline {
     agent any
 
     environment {
-        IMAGE_NAME = "nadinc/docker"          // Replace with your Docker Hub username and image name
+        IMAGE_NAME = "sivagurunathan7/test_repository"
         TAG = "latest"
         CONTAINER_NAME = "my-container"
-        PORT = "8080"
+        PORT = "3001"
     }
 
     stages {
@@ -13,15 +13,15 @@ pipeline {
         stage('Clone Repository') {
             steps {
                 echo "Cloning GitHub repository..."
-                git 'https://github.com/nadin-c/Devops.git'  // Replace with your repo URL
+                git 'https://github.com/Sivagurunathan98/New_docker_push.git'
             }
         }
 
         stage('Build Docker Image') {
             steps {
                 echo "Building Docker image..."
-                sh 'chmod +x Build.sh'
-                sh './Build.sh'
+                bat 'powershell.exe -Command "Set-ExecutionPolicy RemoteSigned -Force"'
+                bat 'powershell.exe -File .\\Build.ps1'
             }
         }
 
@@ -29,7 +29,7 @@ pipeline {
             steps {
                 echo "Logging into Docker Hub..."
                 withCredentials([usernamePassword(credentialsId: 'docker-hub-creds', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
-                    sh 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
+                    bat 'echo %DOCKER_PASS% | docker login -u %DOCKER_USER% --password-stdin'
                 }
             }
         }
@@ -37,16 +37,15 @@ pipeline {
         stage('Push Docker Image') {
             steps {
                 echo "Pushing Docker image to Docker Hub..."
-                sh "docker tag $IMAGE_NAME:$TAG $IMAGE_NAME:$TAG"
-                sh "docker push $IMAGE_NAME:$TAG"
+                bat "docker tag %IMAGE_NAME%:%TAG% %IMAGE_NAME%:%TAG%"
+                bat "docker push %IMAGE_NAME%:%TAG%"
             }
         }
 
         stage('Deploy Docker Container') {
             steps {
                 echo "Deploying Docker container..."
-                sh 'chmod +x Deploy.sh'
-                sh './Deploy.sh'
+                bat 'powershell.exe -File .\\Deploy.ps1'
             }
         }
     }
