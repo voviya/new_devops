@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        IMAGE_NAME = "voviya/devops"          // Replace with your Docker Hub username and image name
+        IMAGE_NAME = "voviya02/devops"          // Replace with your Docker Hub username and image name
         TAG = "latest"
         CONTAINER_NAME = "my-container"
         PORT = "3001"
